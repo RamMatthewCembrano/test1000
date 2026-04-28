@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "@/contexts/CartContext";
 import {
   Drawer,
@@ -41,6 +41,30 @@ const CheckoutDrawer = ({ open, onClose, onConfirm }: CheckoutDrawerProps) => {
     new URLSearchParams(window.location.search).get("table") ?? "";
   const [tableNumber, setTableNumber] = useState(urlTable);
   const tableFromUrl = !!urlTable;
+  const [qrTimestamp] = useState(Date.now());
+  const [checkoutFee, setCheckoutFee] = useState<number>(0);
+
+  useEffect(() => {
+    // Fetch the checkout fee
+    const fetchFee = async () => {
+      try {
+        const { data, error } = await supabase.storage.from("menu-items").download("settings/checkout-fee.json");
+        if (error) return;
+        const text = await data.text();
+        const json = JSON.parse(text);
+        if (json.fee !== undefined) {
+           setCheckoutFee(parseFloat(json.fee) || 0);
+        }
+      } catch (err) {
+        console.error("Failed to load checkout fee:", err);
+      }
+    };
+    if (open) {
+      fetchFee();
+    }
+  }, [open]);
+
+  const finalPrice = totalPrice + checkoutFee;
 
   // Array for numbers 1 to 10 (fallback if no URL param)
   const tableOptions = Array.from({ length: 10 }, (_, i) => (i + 1).toString());
@@ -85,7 +109,7 @@ const CheckoutDrawer = ({ open, onClose, onConfirm }: CheckoutDrawerProps) => {
         {
           customer_name: name,
           table_number: tableNumber,
-          total_price: totalPrice,
+          total_price: finalPrice,
           payment_method: payment,
           receipt_url: receiptUrl,
           status: "pending",
@@ -209,9 +233,13 @@ const CheckoutDrawer = ({ open, onClose, onConfirm }: CheckoutDrawerProps) => {
                   </p>
                   <div className="mx-auto w-40 h-40 bg-white border-2 border-black rounded-lg flex items-center justify-center overflow-hidden">
                     <img
-                      src="/gcash-qr.jpg"
+                      src={`${supabase.storage.from("menu-items").getPublicUrl("settings/gcash-qr.jpg").data.publicUrl}?t=${qrTimestamp}`}
                       alt="GCash QR Code"
                       className="w-full h-full object-contain"
+                      onError={(e) => {
+                        // Fallback to local default if the admin hasn't uploaded a custom QR yet
+                        e.currentTarget.src = "/gcash-qr.jpg";
+                      }}
                     />
                   </div>
                   <p className="text-sm font-semibold">Papicholo's CDO</p>
@@ -263,12 +291,24 @@ const CheckoutDrawer = ({ open, onClose, onConfirm }: CheckoutDrawerProps) => {
           </div>
 
           <DrawerFooter className="px-0 pb-10">
-            <div className="flex items-center justify-between mb-4 border-t pt-4">
+            {checkoutFee > 0 && (
+              <div className="flex items-center justify-between mb-1 text-sm text-gray-500">
+                <span>Subtotal</span>
+                <span>₱{totalPrice.toFixed(2)}</span>
+              </div>
+            )}
+            {checkoutFee > 0 && (
+              <div className="flex items-center justify-between mb-2 text-sm text-gray-500 border-b pb-2">
+                <span>Checkout Fee</span>
+                <span>₱{checkoutFee.toFixed(2)}</span>
+              </div>
+            )}
+            <div className="flex items-center justify-between mb-4 pt-2">
               <span className="text-sm font-medium text-muted-foreground">
                 Amount to Pay
               </span>
               <span className="text-2xl font-black text-black">
-                ₱{totalPrice.toFixed(2)}
+                ₱{finalPrice.toFixed(2)}
               </span>
             </div>
             <Button
