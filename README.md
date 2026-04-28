@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+
 This project is built with:
 
 - Vite
@@ -6,3 +8,4 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
+>>>>>>>
