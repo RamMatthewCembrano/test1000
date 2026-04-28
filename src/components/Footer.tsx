@@ -38,7 +38,7 @@ const InfiniteCarousel = ({
     speedRef.current = speed;
   }, [speed]);
 
-  const repeated = Array.from({ length: 20 }, () => images).flat();
+  const repeated = Array.from({ length: 100 }, () => images).flat();
   const setW = images.length * STEP;
 
   useEffect(() => {
@@ -196,15 +196,12 @@ const Footer = () => {
           alignItems: "center",
           padding: "28px 24px 40px",
           gap: 16,
-          overflow: "hidden",
-          maxHeight: 400,
-          marginTop: -110,
         }}
       >
         <img
           src="/PAPICHOLOS-LOGO.png"
           alt="Papicholo's CDO"
-          style={{ height: 300, width: "auto", objectFit: "contain" }}
+          style={{ height: 100, width: "auto", objectFit: "contain" }}
         />
 
         <p
@@ -215,7 +212,7 @@ const Footer = () => {
             textAlign: "center",
             maxWidth: 240,
             lineHeight: 1.6,
-            marginTop: -100,
+            marginTop: 8,
           }}
         >
           Authentic flavors in the heart of Cagayan de Oro.

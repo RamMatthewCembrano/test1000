@@ -14,8 +14,9 @@ import { AdminSidebar } from "./AdminSidebar";
 import { AdminTopBar, AdminBottomNav } from "./AdminNav";
 import { CategoryManager } from "./Categorymanager";
 import { CarouselManager } from "./Carouselmanager";
+import { SettingsManager } from "./SettingsManager";
 
-type TabKey = "orders" | "inventory" | "history" | "carousel";
+type TabKey = "orders" | "inventory" | "history" | "carousel" | "settings";
 
 // ── Inlined sound alert ────────────────────────────────────────────────────────
 let _audioCtx: AudioContext | null = null;
@@ -64,9 +65,9 @@ const _playDing = () => {
   };
   ctx.state === "suspended"
     ? ctx
-        .resume()
-        .then(play)
-        .catch(() => {})
+      .resume()
+      .then(play)
+      .catch(() => { })
     : play();
 };
 const _useOrderAlert = (
@@ -291,10 +292,16 @@ export default function Admin() {
     const { error } = await supabase.storage
       .from("menu-items")
       .upload(path, file);
+
+    if (e.target) e.target.value = "";
+
     if (!error) {
       const { data } = supabase.storage.from("menu-items").getPublicUrl(path);
       setEditForm((p: any) => ({ ...p, image: data.publicUrl }));
       toast.success("Photo updated");
+    } else {
+      console.error("Upload error:", error);
+      toast.error(`Photo upload failed: ${error.message}`);
     }
     setUploading(false);
   };
@@ -473,7 +480,9 @@ export default function Admin() {
                         ? "Inventory"
                         : tab === "history"
                           ? "Order History"
-                          : "Carousel"}
+                          : tab === "settings"
+                            ? "Checkout Settings"
+                            : "Carousel"}
                   </h1>
                   <p style={{ fontSize: 14, color: C.faint, fontWeight: 400 }}>
                     {tab === "orders"
@@ -482,12 +491,14 @@ export default function Admin() {
                         ? `${items.length} item${items.length !== 1 ? "s" : ""} on the menu`
                         : tab === "history"
                           ? new Date().toLocaleDateString("en-PH", {
-                              weekday: "long",
-                              month: "long",
-                              day: "numeric",
-                              year: "numeric",
-                            })
-                          : "Manage your menu carousel"}
+                            weekday: "long",
+                            month: "long",
+                            day: "numeric",
+                            year: "numeric",
+                          })
+                          : tab === "settings"
+                            ? "Configure checkout options and payment fees"
+                            : "Manage your menu carousel"}
                   </p>
                 </div>
 
@@ -668,6 +679,9 @@ export default function Admin() {
                 onSpeedChange={(v) => setCarouselSpeed(v)}
               />
             )}
+
+            {/* ── Settings tab ── */}
+            {!loading && tab === "settings" && <SettingsManager />}
           </div>
         </main>
       </div>

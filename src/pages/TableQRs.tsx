@@ -27,7 +27,7 @@ const TableQRs = () => {
         <img
           src="/PAPICHOLOS-LOGO.png"
           alt="Papicholo's CDO"
-          style={{ height: 80, objectFit: "contain", marginBottom: 12 }}
+          style={{ height: 50, objectFit: "contain", marginBottom: 16 }}
         />
         <h1
           style={{

@@ -4,10 +4,11 @@ import {
   History,
   LogOut,
   Images,
+  Settings,
 } from "lucide-react";
 import { C } from "./constants";
 
-type TabKey = "orders" | "inventory" | "history" | "carousel";
+type TabKey = "orders" | "inventory" | "history" | "carousel" | "settings";
 
 interface AdminSidebarProps {
   tab: TabKey;
@@ -21,6 +22,7 @@ const NAV: { key: TabKey; Icon: any; label: string }[] = [
   { key: "inventory", Icon: LayoutGrid, label: "Inventory" },
   { key: "history", Icon: History, label: "History" },
   { key: "carousel", Icon: Images, label: "Carousel" },
+  { key: "settings", Icon: Settings, label: "Checkout Settings" },
 ];
 
 export const AdminSidebar = ({
@@ -49,12 +51,12 @@ export const AdminSidebar = ({
     {/* Logo + active count */}
     <div style={{ padding: "0 24px 28px", borderBottom: "1px solid #1A1A1A" }}>
       <div
-        style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}
+        style={{ display: "flex", justifyContent: "center", marginBottom: 24, marginTop: 16 }}
       >
         <img
           src="/PAPICHOLOS-LOGO.png"
           alt="Papicholo's CDO"
-          style={{ height: 72, width: "auto", objectFit: "contain" }}
+          style={{ height: "auto", width: "100%", objectFit: "contain", maxHeight: 120 }}
         />
       </div>
       {pending > 0 && (
