@@ -496,6 +496,7 @@ export default function Admin() {
                             day: "numeric",
                             year: "numeric",
                           })
+                          : "Manage your menu carousel"}
                           : tab === "settings"
                             ? "Configure checkout options and payment fees"
                             : "Manage your menu carousel"}
