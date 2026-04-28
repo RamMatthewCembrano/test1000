@@ -499,7 +499,7 @@ export default function Admin() {
                           : "Manage your menu carousel"}
                     : tab === "settings"
                     ? "Configure checkout options and payment fees"
-                            : "Manage your menu carousel"}
+                    : "Manage your menu carousel"
                   </p>
                 </div>
 
