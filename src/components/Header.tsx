@@ -25,7 +25,7 @@ const Header = () => {
           <img
             src="/PAPICHOLOS-LOGO.png"
             alt="Papicholo's CDO"
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-56 sm:h-80 w-auto object-contain"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-20 sm:h-24 w-auto object-contain"
           />
         </div>
       </motion.div>

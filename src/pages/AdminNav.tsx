@@ -4,10 +4,11 @@ import {
   LayoutGrid,
   History,
   Images,
+  Settings,
 } from "lucide-react";
 import { C } from "./constants";
 
-type TabKey = "orders" | "inventory" | "history" | "carousel";
+type TabKey = "orders" | "inventory" | "history" | "carousel" | "settings";
 
 // ── Top bar ───────────────────────────────────────────────────────────────────
 interface TopBarProps {
@@ -26,7 +27,7 @@ export const AdminTopBar = ({ pending, onLogout }: TopBarProps) => (
       backdropFilter: "blur(10px)",
       borderBottom: `1px solid ${C.border}`,
       padding: "0 18px",
-      height: 56,
+      height: 80,
       display: "grid",
       gridTemplateColumns: "1fr auto 1fr",
       alignItems: "center",
@@ -37,7 +38,7 @@ export const AdminTopBar = ({ pending, onLogout }: TopBarProps) => (
       src="/PAPICHOLOS-LOGO.png"
       alt="Papicholo's CDO"
       style={{
-        height: 40,
+        height: 64,
         width: "auto",
         objectFit: "contain",
         display: "block",
@@ -101,6 +102,7 @@ const NAV: { key: TabKey; Icon: any; label: string }[] = [
   { key: "inventory", Icon: LayoutGrid, label: "Inventory" },
   { key: "history", Icon: History, label: "History" },
   { key: "carousel", Icon: Images, label: "Carousel" },
+  { key: "settings", Icon: Settings, label: "Checkout Settings" },
 ];
 
 export const AdminBottomNav = ({ tab, setTab, pending }: BottomNavProps) => (

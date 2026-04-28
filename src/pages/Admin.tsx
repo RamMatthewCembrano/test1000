@@ -14,8 +14,9 @@ import { AdminSidebar } from "./AdminSidebar";
 import { AdminTopBar, AdminBottomNav } from "./AdminNav";
 import { CategoryManager } from "./Categorymanager";
 import { CarouselManager } from "./Carouselmanager";
+import { SettingsManager } from "./SettingsManager";
 
-type TabKey = "orders" | "inventory" | "history" | "carousel";
+type TabKey = "orders" | "inventory" | "history" | "carousel" | "settings";
 
 // ── Inlined sound alert ────────────────────────────────────────────────────────
 let _audioCtx: AudioContext | null = null;
@@ -291,10 +292,16 @@ export default function Admin() {
     const { error } = await supabase.storage
       .from("menu-items")
       .upload(path, file);
+
+    if (e.target) e.target.value = "";
+
     if (!error) {
       const { data } = supabase.storage.from("menu-items").getPublicUrl(path);
       setEditForm((p: any) => ({ ...p, image: data.publicUrl }));
       toast.success("Photo updated");
+    } else {
+      console.error("Upload error:", error);
+      toast.error(`Photo upload failed: ${error.message}`);
     }
     setUploading(false);
   };
@@ -473,7 +480,9 @@ export default function Admin() {
                         ? "Inventory"
                         : tab === "history"
                           ? "Order History"
-                          : "Carousel"}
+                          : tab === "settings"
+                            ? "Checkout Settings"
+                            : "Carousel"}
                   </h1>
                   <p style={{ fontSize: 14, color: C.faint, fontWeight: 400 }}>
                     {tab === "orders"
@@ -668,6 +677,9 @@ export default function Admin() {
                 onSpeedChange={(v) => setCarouselSpeed(v)}
               />
             )}
+
+            {/* ── Settings tab ── */}
+            {!loading && tab === "settings" && <SettingsManager />}
           </div>
         </main>
       </div>
