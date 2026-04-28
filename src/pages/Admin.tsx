@@ -64,9 +64,9 @@ const _playDing = () => {
   };
   ctx.state === "suspended"
     ? ctx
-        .resume()
-        .then(play)
-        .catch(() => {})
+      .resume()
+      .then(play)
+      .catch(() => { })
     : play();
 };
 const _useOrderAlert = (
@@ -482,11 +482,11 @@ export default function Admin() {
                         ? `${items.length} item${items.length !== 1 ? "s" : ""} on the menu`
                         : tab === "history"
                           ? new Date().toLocaleDateString("en-PH", {
-                              weekday: "long",
-                              month: "long",
-                              day: "numeric",
-                              year: "numeric",
-                            })
+                            weekday: "long",
+                            month: "long",
+                            day: "numeric",
+                            year: "numeric",
+                          })
                           : "Manage your menu carousel"}
                   </p>
                 </div>
