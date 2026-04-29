@@ -11,9 +11,11 @@ import {
   Trash2,
   AlertTriangle,
   Loader2,
+  Download,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import * as xlsx from "xlsx";
 import { C, HISTORY_FILTERS } from "./constants";
 import { Pill, Lbl, HR } from "./AdminPrimitives";
 
@@ -393,6 +395,68 @@ export const HistoryPanel = ({
         })
       : "Browse by Date";
 
+  // ── Export to Excel ────────────────────────────────────────────────────────
+  const exportToExcel = () => {
+    if (dayOrders.length === 0) {
+      toast("No orders to export");
+      return;
+    }
+
+    const rows: any[] = [];
+    dayOrders.forEach((order) => {
+      const date = new Date(order.created_at);
+      const dateStr = date.toLocaleDateString("en-PH");
+      const timeStr = date.toLocaleTimeString("en-PH", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      if (order.order_items && order.order_items.length > 0) {
+        order.order_items.forEach((item: any) => {
+          rows.push({
+            "Order ID": order.id,
+            Date: dateStr,
+            Time: timeStr,
+            "Table Number": order.table_number,
+            "Customer Name": order.customer_name,
+            Status: order.status,
+            "Payment Method":
+              order.payment_method === "gcash" ? "GCash" : "Pay at Counter",
+            "Item Name": item.name,
+            Quantity: item.quantity,
+            "Unit Price": item.price,
+            "Item Total": item.price * item.quantity,
+            "Order Total": order.total_price,
+            "Receipt URL": order.receipt_url || "",
+          });
+        });
+      } else {
+        rows.push({
+          "Order ID": order.id,
+          Date: dateStr,
+          Time: timeStr,
+          "Table Number": order.table_number,
+          "Customer Name": order.customer_name,
+          Status: order.status,
+          "Payment Method":
+            order.payment_method === "gcash" ? "GCash" : "Pay at Counter",
+          "Item Name": "",
+          Quantity: "",
+          "Unit Price": "",
+          "Item Total": "",
+          "Order Total": order.total_price,
+          "Receipt URL": order.receipt_url || "",
+        });
+      }
+    });
+
+    const ws = xlsx.utils.json_to_sheet(rows);
+    const wb = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb, ws, "Orders");
+    xlsx.writeFile(wb, `orders_${displayDate}.xlsx`);
+    toast.success("Exported to Excel");
+  };
+
   // ── Delete old orders ──────────────────────────────────────────────────────
   const clearOldHistory = async () => {
     setCleaning(true);
@@ -624,6 +688,29 @@ export const HistoryPanel = ({
             pointerEvents: "none",
           }}
         />
+
+        {/* Export to Excel button */}
+        <button
+          onClick={exportToExcel}
+          title="Export orders to Excel"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            padding: "10px 14px",
+            borderRadius: 99,
+            fontSize: 13,
+            fontWeight: 500,
+            border: `1.5px solid ${C.border}`,
+            background: C.surface,
+            color: C.mid,
+            cursor: "pointer",
+            flexShrink: 0,
+            transition: "all 0.15s",
+          }}
+        >
+          <Download size={14} strokeWidth={1.5} />
+        </button>
 
         {/* Clear old history button — always visible */}
         <button
